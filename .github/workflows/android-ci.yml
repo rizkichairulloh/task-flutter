@@ -2,7 +2,7 @@ name: Flutter CI (Build APK)
 
 on:
   push:
-    branches: ["master"]   # jalan kalau push ke branch dev
+    branches: ["master"]   # jalan kalau push ke branch master
   pull_request:
     branches: ["master"]
 
@@ -11,79 +11,55 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.6' # ganti sesuai versi Flutter kamu
+          flutter-version: '3.32.6'
 
-      # 3. Get dependencies
       - name: Flutter Pub Get
         run: flutter pub get
 
-      # 4. Build Debug APK
       - name: Build Debug APK
         run: flutter build apk --debug
 
-#      # 5. Build Release APK (unsigned)
-#      - name: Build Release APK
-#        run: flutter build apk --release
-
-      # 5. Upload Artifact (APK)
-#      - name: Upload APK
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: app-debug.apk
-#          path: |
-#            build/app/outputs/flutter-apk/app-debug.apk
-#            build/app/outputs/flutter-apk/app-release.apk
-
-      # 5. Upload Debug APK ke GitHub Release
       - name: Upload Debug APK to Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: dev-latest            # auto bikin / update release dengan tag ini
+          release_name: "Dev Build Latest"
+          overwrite: true                 # replace file lama kalau ada
           files: build/app/outputs/flutter-apk/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ios:
     runs-on: macos-latest
-    needs: android   # jalankan setelah job android selesai (opsional)
+    needs: android
 
     steps:
-      # 1. Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.6' # ganti sesuai versi Flutter kamu
+          flutter-version: '3.32.6'
 
-      # 3. Get dependencies
       - name: Flutter Pub Get
         run: flutter pub get
 
-      # 4. Build iOS (debug)
-      - name: Build iOS (simulator)
+      - name: Build iOS (debug)
         run: flutter build ios --no-codesign
-
-# upload artifact
-#      # 5. Upload iOS build
-#      - name: Upload iOS build
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: flutter-ios
-#          path: build/ios/iphoneos/*.app
 
       - name: Upload iOS app to Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: dev-latest            # sama tag dengan Android
+          release_name: "Dev Build Latest"
+          overwrite: true
           files: build/ios/iphoneos/Runner.app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
