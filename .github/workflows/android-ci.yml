@@ -7,7 +7,7 @@ on:
     branches: ["master"]
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,15 +29,60 @@ jobs:
       - name: Build Debug APK
         run: flutter build apk --debug
 
-      # 5. Build Release APK (unsigned)
-      - name: Build Release APK
-        run: flutter build apk --release
+#      # 5. Build Release APK (unsigned)
+#      - name: Build Release APK
+#        run: flutter build apk --release
 
       # 5. Upload Artifact (APK)
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+#      - name: Upload APK
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: app-debug.apk
+#          path: |
+#            build/app/outputs/flutter-apk/app-debug.apk
+#            build/app/outputs/flutter-apk/app-release.apk
+
+      # 5. Upload Debug APK ke GitHub Release
+      - name: Upload Debug APK to Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: app-debug.apk
-          path: |
-            build/app/outputs/flutter-apk/app-debug.apk
-            build/app/outputs/flutter-apk/app-release.apk
+          files: build/app/outputs/flutter-apk/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ios:
+    runs-on: macos-latest
+    needs: android   # jalankan setelah job android selesai (opsional)
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.6' # ganti sesuai versi Flutter kamu
+
+      # 3. Get dependencies
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      # 4. Build iOS (debug)
+      - name: Build iOS (simulator)
+        run: flutter build ios --no-codesign
+
+#      # 5. Upload iOS build
+#      - name: Upload iOS build
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: flutter-ios
+#          path: build/ios/iphoneos/*.app
+
+      - name: Upload iOS app to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/ios/iphoneos/Runner.app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
