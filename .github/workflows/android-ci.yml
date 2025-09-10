@@ -1,9 +1,9 @@
-name: Android Build
+name: Flutter CI (Build APK)
 
 on:
-  pull_request:
-    branches: ["master"]
   push:
+    branches: ["master"]   # jalan kalau push ke branch dev
+  pull_request:
     branches: ["master"]
 
 jobs:
@@ -11,28 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo
+      # 1. Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Setup JDK
-      - name: Setup Java JDK
-        uses: actions/setup-java@v4
+      # 2. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          java-version: '17'
-          distribution: 'temurin'   # lebih disarankan dibanding adopt
+          flutter-version: '3.32.6' # ganti sesuai versi Flutter kamu
 
-      # Pastikan gradlew bisa dieksekusi
-      - name: Grant execute permission for Gradlew
-        run: chmod +x gradlew
+      # 3. Get dependencies
+      - name: Flutter Pub Get
+        run: flutter pub get
 
-      # Build project (bisa diganti assembleDebug kalau cuma butuh APK debug)
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
+      # 4. Build Debug APK
+      - name: Build Debug APK
+        run: flutter build apk --debug
 
-      # Upload artifact APK
+      # 5. Upload Artifact (APK)
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: task-flutter.apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: app-debug.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
