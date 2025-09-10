@@ -73,6 +73,7 @@ jobs:
       - name: Build iOS (simulator)
         run: flutter build ios --no-codesign
 
+# upload artifact
 #      # 5. Upload iOS build
 #      - name: Upload iOS build
 #        uses: actions/upload-artifact@v4
