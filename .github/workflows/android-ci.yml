@@ -1,4 +1,4 @@
-name: Flutter CI (Build APK)
+name: Flutter CI
 
 on:
   push:
@@ -27,11 +27,11 @@ jobs:
 
       # 4a. Build Staging Debug APK
       - name: Build Staging Debug APK
-        run: flutter build apk --flavor staging -t lib/main_staging.dart --debug
+        run: flutter build apk --flavor staging -t lib/main.dart --debug
 
       # 4b. Build Prod Debug APK
       - name: Build Prod Debug APK
-        run: flutter build apk --flavor prod -t lib/main_prod.dart --debug
+        run: flutter build apk --flavor prod -t lib/main.dart --debug
 
       # 5a. Upload Staging APK
       - name: Upload Staging APK
@@ -68,7 +68,7 @@ jobs:
 
       # 4. Build iOS (staging example, bisa duplicate untuk prod juga)
       - name: Build iOS Staging
-        run: flutter build ios --flavor staging -t lib/main_staging.dart --no-codesign
+        run: flutter build ios --flavor staging -t lib/main.dart --no-codesign
 
       # 5. Upload iOS build
       - name: Upload iOS build
