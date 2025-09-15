@@ -25,16 +25,27 @@ jobs:
       - name: Flutter Pub Get
         run: flutter pub get
 
-      # 4. Build Debug APK
-      - name: Build Debug APK
-        run: flutter build apk --debug
+      # 4a. Build Staging Debug APK
+      - name: Build Staging Debug APK
+        run: flutter build apk --flavor staging -t lib/main_staging.dart --debug
 
-      # 5. Upload Artifact (APK)
-      - name: Upload APK
+      # 4b. Build Prod Debug APK
+      - name: Build Prod Debug APK
+        run: flutter build apk --flavor prod -t lib/main_prod.dart --debug
+
+      # 5a. Upload Staging APK
+      - name: Upload Staging APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug.apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: app-staging-debug.apk
+          path: build/app/outputs/flutter-apk/app-staging-debug.apk
+
+      # 5b. Upload Prod APK
+      - name: Upload Prod APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-prod-debug.apk
+          path: build/app/outputs/flutter-apk/app-prod-debug.apk
 
   ios:
     runs-on: macos-latest
@@ -55,9 +66,9 @@ jobs:
       - name: Flutter Pub Get
         run: flutter pub get
 
-      # 4. Build iOS (debug)
-      - name: Build iOS (simulator)
-        run: flutter build ios --no-codesign
+      # 4. Build iOS (staging example, bisa duplicate untuk prod juga)
+      - name: Build iOS Staging
+        run: flutter build ios --flavor staging -t lib/main_staging.dart --no-codesign
 
       # 5. Upload iOS build
       - name: Upload iOS build

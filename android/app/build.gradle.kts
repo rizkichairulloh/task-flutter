@@ -30,6 +30,19 @@ android {
         versionName = flutter.versionName
     }
 
+    flavorDimensions "app"
+    productFlavors {
+        staging {
+            dimension "app"
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            resValue "string", "app_name", "Task Staging"
+        }
+        prod {
+            dimension "app"
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
