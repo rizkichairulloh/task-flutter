@@ -44,6 +44,7 @@ android {
             resValue("string", "app_name", "Task")
         }
     }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
